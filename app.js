@@ -37,9 +37,6 @@ app.use(passport.session());
 
 /********* local mongo db connection *********/
 mongoose.connect("mongodb://0.0.0.0:27017/userDB");
-// mongoose.set("useCreateIndex", true)
-
-// console.log(md5("message"));
 
 /*** database schema  ***/
 const userSchema = new mongoose.Schema({
@@ -108,22 +105,15 @@ app.get("/register", function (req, res) {
 });
 
 app.get("/secrets", function (req, res) {
-
-User.find({"secret": {$ne: null}}, function (err, foundUsers) {
-  if (err) {
-    console.log(err);
-  } else {
-    if (foundUsers) {
-      res.render("secrets", {usersWithSecrets: foundUsers})
+  User.find({ secret: { $ne: null } }, function (err, foundUsers) {
+    if (err) {
+      console.log(err);
+    } else {
+      if (foundUsers) {
+        res.render("secrets", { usersWithSecrets: foundUsers });
+      }
     }
-  }
-})
-
-  // if (req.isAuthenticated()) {
-  //   res.render("secrets");
-  // } else {
-  //   res.redirect("/login");
-  // }
+  });
 });
 
 app.get("/submit", function (req, res) {
@@ -146,8 +136,8 @@ app.post("/submit", function (req, res) {
       if (foundUser) {
         foundUser.secret = submittedSecret;
         foundUser.save(function () {
-          res.redirect("/secrets")
-        })
+          res.redirect("/secrets");
+        });
       }
     }
   });
@@ -175,31 +165,9 @@ app.post("/register", function (req, res) {
           res.redirect("/secrets");
         });
       }
-
-      // const authenticate = User.authenticate();
-      // authenticate('username', 'password', function(err, result) {
-      //   if (err) { ... }
-
-      // Value 'result' is set to false. The user could not be authenticated since the user is not active
     }
   );
 });
-
-// bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
-//   // Store hash in your password DB.
-//   const newUser = new User({
-//     email: req.body.username,
-//     password: hash,
-//   });
-//   newUser.save(function (err) {
-//     if (!err) {
-//       res.render("secrets");
-//     } else {
-//       console.log(err);
-//     }
-//   });
-// });
-// });
 
 app.post("/login", function (req, res) {
   const user = new User({
@@ -216,23 +184,6 @@ app.post("/login", function (req, res) {
       });
     }
   });
-
-  // const username = req.body.username;
-  // const password = req.body.password;
-  // User.findOne({ email: username }, function (err, foundUser) {
-  //   if (err) {
-  //     console.log(err);
-  //   } else {
-  //     if (foundUser) {
-  //       bcrypt.compare(password, foundUser.password, function (err, result) {
-  //         // result == true
-  //         if (result === true) {
-  //           res.render("secrets");
-  //         }
-  //       });
-  //     }
-  //   }
-  // });
 });
 
 app.listen(PORT, () => {
